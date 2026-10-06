@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Privacidade e termos · SeeSpace</title>
+<meta name="theme-color" content="#0a0b0d">
+<link rel="icon" href="img/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilo.css?v=20261006f">
+<link rel="stylesheet" href="css/acabamento.css?v=20261006f">
+<script src="js/config.js?v=20261006f"></script>
+</head>
+<body>
+<header class="topo solido"><div class="wrap"><a class="logo" href="index.html"><img src="img/icone.svg" width="28" height="28" alt=""><span data-marca>SeeSpace</span></a><div class="acoes"><a class="entrar" style="display:inline" href="index.html">← Voltar</a></div></div></header>
+<main class="pagina">
+  <div class="wrap texto">
+    <h1>Privacidade e termos</h1>
+    <p class="aviso-rascunho">Rascunho. Revisar com um advogado antes de vender.</p>
+
+    <h2>O que coletamos</h2>
+    <ul>
+      <li><b>Filmagens e fotos</b> do espaço que você envia, para montar o tour 3D.</li>
+      <li><b>Dados do sensor do celular</b> (giroscópio e acelerômetro) gravados junto da filmagem, para melhorar o 3D.</li>
+      <li><b>Contagem de uso do tour:</b> quantas vezes foi aberto e quantas pessoas clicaram em “Agendar visita”. Não guardamos quem é a pessoa.</li>
+      <li><b>Seus dados de contato</b> (nome, e-mail, WhatsApp) quando você fala com a gente ou cria uma conta.</li>
+    </ul>
+
+    <h2>Para que usamos</h2>
+    <p>Só para montar, hospedar e mostrar os seus tours, e para falar com você. Não vendemos seus dados.</p>
+
+    <h2>Pessoas e objetos pessoais</h2>
+    <p>Antes de filmar, tire pessoas, documentos, fotos de família e objetos de valor do caminho. Você é responsável por ter autorização do dono do espaço para filmar e publicar.</p>
+
+    <h2>Quem vê o tour</h2>
+    <p>Quem tiver o link. Você decide onde compartilhar. Para tirar um tour do ar, fale com a gente.</p>
+
+    <h2>Seus direitos (LGPD)</h2>
+    <p>Você pode pedir a qualquer momento uma cópia dos seus dados, a correção ou a exclusão. É só chamar no <a data-zap="Olá! Quero falar sobre meus dados (LGPD)." style="text-decoration:underline">WhatsApp</a>.</p>
+
+    <h2>Créditos</h2>
+    <p id="creditos">Visualizador 3D feito com Spark e Three.js (licença MIT).</p>
+  </div>
+</main>
+<script>
+  const S = window.SITE;
+  document.querySelectorAll("[data-marca]").forEach(e => e.textContent = S.marca);
+  document.querySelectorAll("[data-zap]").forEach(a => { a.href = S.wa(a.dataset.zap); a.target = "_blank"; a.rel = "noopener"; });
+  if (S.hero && S.hero.credito) document.getElementById("creditos").textContent += " Cena do topo do site: " + S.hero.credito + ".";
+</script>
+</body>
+</html>

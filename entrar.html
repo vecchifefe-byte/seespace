@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Entrar · SeeSpace</title>
+<meta name="theme-color" content="#0a0b0d">
+<link rel="icon" href="img/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilo.css?v=20261006f">
+<link rel="stylesheet" href="css/acabamento.css?v=20261006f">
+<script src="js/config.js?v=20261006f"></script>
+<style>
+  body { min-height: 100svh; display: grid; grid-template-columns: 1fr 1fr; }
+  .lado-form { display: flex; flex-direction: column; padding: 28px clamp(16px, 5vw, 64px); }
+  .lado-form .logo { margin-bottom: auto; }
+  .caixa { width: min(400px, 100%); margin: 48px auto; }
+  .caixa h1 { font: 400 clamp(40px, 5vw, 56px)/1 var(--serif); margin: 0 0 10px; letter-spacing: -.02em; }
+  .caixa > p { margin: 0 0 28px; color: var(--mut); }
+  .abas { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); margin-bottom: 24px; }
+  .abas button { height: 38px; border: 0; border-radius: 999px; background: none; color: var(--mut); font-weight: 600; font-size: 14px; }
+  .abas button[aria-selected="true"] { background: var(--surface-2); color: var(--fg); }
+  label { display: block; font-size: 13.5px; color: var(--fg-2); margin: 16px 0 6px; font-weight: 500; }
+  input { width: 100%; height: 50px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line-2); background: var(--bg-2); color: var(--fg); font: inherit; font-size: 16px; transition: border-color .2s; }
+  input:focus { outline: none; border-color: var(--acc); }
+  .linha { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 13.5px; }
+  .linha a { color: var(--fg-2); } .linha a:hover { color: var(--fg); }
+  form .btn { width: 100%; margin-top: 24px; height: 52px; }
+  .demo { margin-top: 20px; padding: 12px 14px; border-radius: 12px; background: rgba(143, 240, 201, .07); border: 1px solid rgba(143, 240, 201, .25); font-size: 13.5px; color: var(--fg-2); }
+  .demo b { color: var(--acc); }
+  .so-criar { display: none; } form.criar .so-criar { display: block; }
+  .lado-arte { position: relative; overflow: hidden; background: #0d1013; border-left: 1px solid var(--line); }
+  .lado-arte canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.4s ease; }
+  .lado-arte .poster { position: absolute; inset: 0; background: radial-gradient(60% 50% at 60% 40%, rgba(143, 240, 201, .18), transparent 60%), radial-gradient(50% 60% at 30% 80%, rgba(243, 197, 139, .12), transparent 60%); }
+  .lado-arte .frase { position: absolute; left: 32px; right: 32px; bottom: 32px; pointer-events: none; font: 400 34px/1.1 var(--serif); text-shadow: 0 2px 20px rgba(0, 0, 0, .6); }
+  .lado-arte .frase em { color: var(--acc); }
+  @media (max-width: 880px) { body { grid-template-columns: 1fr; } .lado-arte { display: none; } }
+</style>
+</head>
+<body>
+  <div class="lado-form">
+    <a class="logo" href="index.html"><img src="img/icone.svg" width="28" height="28" alt=""><span data-marca>SeeSpace</span></a>
+    <div class="caixa">
+      <h1 id="titulo">Bem-vindo de volta</h1>
+      <p id="subtitulo">Entre para ver seus tours e gravações.</p>
+      <div class="abas" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-modo="entrar">Entrar</button>
+        <button type="button" role="tab" aria-selected="false" data-modo="criar">Criar conta</button>
+      </div>
+      <form id="form" novalidate>
+        <div class="so-criar"><label for="nome">Seu nome</label><input id="nome" autocomplete="name" placeholder="Como devemos te chamar?"></div>
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email" placeholder="voce@empresa.com.br" required>
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        <div class="linha"><span></span><a data-zap="Olá! Esqueci minha senha do painel.">Esqueci a senha</a></div>
+        <button class="btn btn-acc" type="submit" id="enviar">Entrar</button>
+      </form>
+      <div class="demo"><b>Versão de demonstração.</b> Entre com qualquer e-mail e senha para conhecer o painel. Nada é guardado fora deste navegador.</div>
+    </div>
+  </div>
+  <div class="lado-arte" aria-hidden="true">
+    <div class="poster"></div>
+    <canvas id="cena"></canvas>
+    <div class="frase">Seus espaços, <em>em 3D</em>, num lugar só.</div>
+  </div>
+<script>
+(() => {
+  const S = window.SITE, $ = id => document.getElementById(id);
+  document.querySelectorAll("[data-marca]").forEach(e => e.textContent = S.marca);
+  document.querySelectorAll("[data-zap]").forEach(a => { a.href = S.wa(a.dataset.zap); a.target = "_blank"; a.rel = "noopener"; });
+  // já entrou? vai direto para o painel
+  try { if (localStorage.getItem("ss_sessao")) location.replace("painel.html"); } catch (e) {}
+
+  const form = $("form");
+  document.querySelectorAll(".abas button").forEach(b => b.onclick = () => {
+    const criar = b.dataset.modo === "criar";
+    document.querySelectorAll(".abas button").forEach(x => x.setAttribute("aria-selected", x === b));
+    form.classList.toggle("criar", criar);
+    $("titulo").textContent = criar ? "Crie sua conta" : "Bem-vindo de volta";
+    $("subtitulo").textContent = criar ? "Leva menos de um minuto." : "Entre para ver seus tours e gravações.";
+    $("enviar").textContent = criar ? "Criar conta" : "Entrar";
+    $("senha").autocomplete = criar ? "new-password" : "current-password";
+  });
+  form.onsubmit = e => {
+    e.preventDefault();
+    const email = $("email").value.trim();
+    if (!/^\S+@\S+\.\S+$/.test(email)) { $("email").focus(); $("email").style.borderColor = "var(--danger)"; return; }
+    const nome = $("nome").value.trim() || email.split("@")[0];
+    try { localStorage.setItem("ss_sessao", JSON.stringify({ nome, email, desde: Date.now() })); } catch (err) {}
+    location.href = "painel.html";
+  };
+})();
+</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+  "@sparkjsdev/spark": "https://cdn.jsdelivr.net/npm/@sparkjsdev/spark@2.2.0/dist/spark.module.js"
+} }
+</script>
+<script type="module">
+  // cena 3D ao lado do formulário, só em tela grande (no celular o lado da arte nem aparece)
+  if (matchMedia("(min-width: 881px)").matches) import("./js/heroi3d.js?v=20261006f");
+</script>
+</body>
+</html>

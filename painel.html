@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Painel · SeeSpace</title>
+<meta name="theme-color" content="#0a0b0d">
+<meta name="robots" content="noindex">
+<link rel="icon" href="img/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilo.css?v=20261006f">
+<link rel="stylesheet" href="css/acabamento.css?v=20261006f">
+<link rel="stylesheet" href="css/painel.css?v=20261006f">
+<script src="js/config.js?v=20261006f"></script>
+<script>try { if (!localStorage.getItem("ss_sessao")) location.replace("entrar.html"); } catch (e) {}</script>
+</head>
+<body class="painel">
+
+<aside class="lateral" aria-label="Menu do painel">
+  <a class="logo" href="index.html"><img src="img/icone.svg" width="28" height="28" alt=""><span data-marca>SeeSpace</span></a>
+  <nav>
+    <a href="#inicio" data-v="inicio"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7M5 10v10h14V10"/></svg><span>Início</span></a>
+    <a href="#tours" data-v="tours"><svg viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg><span>Meus tours</span></a>
+    <a href="#gravacoes" data-v="gravacoes"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg><span>Gravações</span></a>
+    <a href="#numeros" data-v="numeros"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Números</span></a>
+    <a href="#marca" data-v="marca"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><span>Minha marca</span></a>
+    <a href="#plano" data-v="plano"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><span>Plano</span></a>
+  </nav>
+  <a class="nova btn btn-acc" data-captura><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Nova gravação</span></a>
+</aside>
+
+<div class="area">
+  <header class="barra-topo">
+    <div class="demo-tag">Demonstração</div>
+    <div class="usuario">
+      <span class="avatar" id="avatar">?</span>
+      <span id="nome-usuario"></span>
+      <button class="btn btn-vidro btn-sm" id="sair">Sair</button>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- INÍCIO -->
+    <section class="vista" id="v-inicio">
+      <h1 class="ola" id="ola">Olá</h1>
+      <p class="mut">Aqui está o resumo dos seus espaços em 3D.</p>
+      <div class="kpis">
+        <div class="kpi"><small>Tours no ar</small><b id="k-tours">–</b></div>
+        <div class="kpi"><small>Aberturas</small><b id="k-abriu">–</b></div>
+        <div class="kpi"><small>Pediram visita</small><b id="k-zap">–</b></div>
+        <div class="kpi"><small>Em processamento</small><b id="k-proc">–</b></div>
+      </div>
+      <div class="chamada">
+        <div><h2>Tem um espaço novo para mostrar?</h2><p class="mut">Abra o site de filmagem no celular e ande devagar pelo espaço. O envio é automático.</p></div>
+        <a class="btn btn-acc" data-captura>Nova gravação</a>
+      </div>
+      <h2 class="sub-t">Seus tours</h2>
+      <div class="grade-tours" data-lista-tours></div>
+    </section>
+
+    <!-- TOURS -->
+    <section class="vista" id="v-tours" hidden>
+      <div class="cab-vista"><div><h1>Meus tours</h1><p class="mut">Abra, copie o link ou o código para o seu site.</p></div><a class="btn btn-acc btn-sm" data-captura>Nova gravação</a></div>
+      <div class="grade-tours" data-lista-tours></div>
+    </section>
+
+    <!-- GRAVAÇÕES -->
+    <section class="vista" id="v-gravacoes" hidden>
+      <div class="cab-vista"><div><h1>Gravações</h1><p class="mut">Cada filmagem enviada e em que etapa ela está.</p></div><button class="btn btn-vidro btn-sm" id="atualizar">Atualizar</button></div>
+      <div class="lista-grav" id="lista-grav"></div>
+    </section>
+
+    <!-- NÚMEROS -->
+    <section class="vista" id="v-numeros" hidden>
+      <div class="cab-vista"><div><h1>Números</h1><p class="mut">Quem abriu cada tour e quem clicou para agendar visita.</p></div></div>
+      <div class="tabela-wrap"><table class="comp tabela-num"><thead><tr><th>Tour</th><th>Aberturas</th><th>Pediram visita</th><th>Conversão</th></tr></thead><tbody id="tab-num"></tbody></table></div>
+      <p class="nota">Contamos uma abertura cada vez que alguém abre o link, e um pedido quando clica em “Agendar visita”.</p>
+    </section>
+
+    <!-- MARCA -->
+    <section class="vista" id="v-marca" hidden>
+      <div class="cab-vista"><div><h1>Minha marca</h1><p class="mut">O que aparece no tour para o seu cliente.</p></div></div>
+      <div class="marca-grade">
+        <form class="cartao form-marca" id="form-marca">
+          <label for="m-nome">Nome que aparece no tour</label><input id="m-nome" placeholder="Ex.: Imobiliária Exemplo">
+          <label for="m-cor">Cor</label>
+          <div class="cores" id="cores"></div>
+          <label for="m-zap">WhatsApp para “Agendar visita”</label><input id="m-zap" inputmode="tel" placeholder="(51) 99999-9999">
+          <button class="btn btn-acc" type="submit">Salvar</button>
+          <p class="nota">Na demonstração isso fica só neste navegador. Para aplicar nos seus tours agora, toque em “Pedir alteração”.</p>
+          <a class="btn btn-vidro" id="pedir-marca">Pedir alteração no WhatsApp</a>
+        </form>
+        <div class="cartao previa-marca">
+          <div class="janela-tour" id="jan-marca"><span class="marca-im" id="pm-nome">Sua Marca</span><div class="chips"><span class="on" id="pm-chip">Sala</span><span>Cozinha</span><span>Quarto</span></div><span class="zap" id="pm-zap">Agendar visita</span></div>
+          <small class="mut">Prévia de como o tour fica.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANO -->
+    <section class="vista" id="v-plano" hidden>
+      <div class="cab-vista"><div><h1>Plano</h1><p class="mut">Seu plano atual e o uso do mês.</p></div></div>
+      <div class="cartao uso">
+        <div><small class="mut">Plano atual</small><h2 id="plano-atual">Profissional</h2></div>
+        <div class="medidor"><div class="medidor-t"><i id="uso-barra"></i></div><small class="mut" id="uso-txt"></small></div>
+      </div>
+      <div class="planos mini" id="planos-mini"></div>
+    </section>
+  </main>
+</div>
+
+<!-- janela do tour -->
+<dialog id="janela" class="janela">
+  <div class="janela-cab"><b id="janela-titulo">Tour</b><button class="btn btn-vidro btn-sm" id="fechar">Fechar</button></div>
+  <iframe id="janela-tour" title="Tour 3D" allow="fullscreen; xr-spatial-tracking"></iframe>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="js/painel.js?v=20261006f"></script>
+</body>
+</html>

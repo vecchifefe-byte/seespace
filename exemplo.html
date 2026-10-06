@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Tour 3D de exemplo · SeeSpace</title>
+<meta name="theme-color" content="#0a0b0d">
+<link rel="icon" href="img/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilo.css?v=20261006f">
+<script src="js/config.js?v=20261006f"></script>
+<style>
+  html, body { height: 100%; overflow: hidden; }
+  body { background: linear-gradient(180deg, #070a12 0%, #0e1a2b 38%, #17303d 62%, #0a0b0d 100%); }
+  #c { position: fixed; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  #c:active { cursor: grabbing; }
+  .barra { position: fixed; inset: 0 0 auto 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); pointer-events: none; }
+  .barra > * { pointer-events: auto; }
+  .pilula { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px; background: rgba(8, 10, 12, .55); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-size: 14px; font-weight: 600; }
+  .pilula img { width: 22px; height: 22px; }
+  .tag { color: var(--warm); font-size: 12px; }
+  .baixo { position: fixed; inset: auto 0 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); pointer-events: none; }
+  .baixo > * { pointer-events: auto; }
+  .credito { max-width: 420px; font-size: 11.5px; line-height: 1.5; color: rgba(255, 255, 255, .6); text-shadow: 0 1px 6px rgba(0, 0, 0, .8); }
+  .dica { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 14px 18px; border-radius: 16px; background: rgba(8, 10, 12, .6); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-size: 14px; text-align: center; transition: opacity .6s ease; pointer-events: none; }
+  .dica.some, .carga.some { opacity: 0; }
+  .carga { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--fg-2); font-size: 14px; transition: opacity .8s ease; pointer-events: none; }
+  .carga b { width: 140px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .12); overflow: hidden; position: relative; }
+  .carga b::after { content: ""; position: absolute; inset: 0; width: 40%; background: var(--acc); animation: corre 1.2s infinite ease-in-out; }
+  @keyframes corre { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+  @media (max-width: 600px) { .baixo { flex-direction: column; align-items: stretch; } .baixo .btn { width: 100%; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+  "@sparkjsdev/spark": "https://cdn.jsdelivr.net/npm/@sparkjsdev/spark@2.2.0/dist/spark.module.js"
+} }
+</script>
+</head>
+<body>
+<canvas id="c" aria-label="Tour 3D de exemplo"></canvas>
+<div class="carga" id="carga"><b></b><span>Carregando o tour 3D…</span></div>
+<div class="barra">
+  <a class="pilula" href="index.html"><img src="img/icone.svg" alt=""><span data-marca>SeeSpace</span></a>
+  <span class="pilula tag">Tour de exemplo</span>
+</div>
+<div class="dica" id="dica">Arraste para olhar em volta<br><small class="mut" id="dica-mover"></small></div>
+<div class="baixo">
+  <div class="credito" id="credito"></div>
+  <a class="btn btn-acc" data-zap="Olá! Vi o tour de exemplo e quero um tour 3D do meu espaço.">Quero um tour assim</a>
+</div>
+
+<script>
+  document.querySelectorAll("[data-marca]").forEach(e => e.textContent = SITE.marca);
+  document.querySelectorAll("[data-zap]").forEach(a => { a.href = SITE.wa(a.dataset.zap); a.target = "_blank"; a.rel = "noopener"; });
+  document.getElementById("credito").textContent = (SITE.hero.credito || "") + ". Capturada com scanner profissional pelo autor; os tours SeeSpace são filmados com celular.";
+  document.getElementById("dica-mover").textContent = matchMedia("(pointer: coarse)").matches ? "Use dois dedos para andar" : "Use W A S D ou as setas para andar";
+</script>
+<script type="module">
+import * as THREE from "three";
+import { SparkRenderer, SplatMesh, SparkControls } from "@sparkjsdev/spark";
+const h = SITE.hero, $ = id => document.getElementById(id);
+const MOBILE = /Android|iPhone|iPad/i.test(navigator.userAgent) || matchMedia("(max-width: 760px)").matches;
+const canvas = $("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+renderer.setClearColor(0x000000, 0);
+renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.75 : 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(65, 1, 0.02, 500);
+function tamanho() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.fov = camera.aspect >= 1 ? 65 : 80; camera.updateProjectionMatrix(); }
+tamanho(); addEventListener("resize", tamanho);
+scene.add(new SparkRenderer({ renderer }));
+const mesh = new SplatMesh({ url: MOBILE && h.urlCelular ? h.urlCelular : h.url });
+if (h.girar !== false) mesh.quaternion.set(1, 0, 0, 0);
+scene.add(mesh);
+camera.position.set(...h.pos); camera.lookAt(new THREE.Vector3(...h.alvo));
+const controls = new SparkControls({ canvas });
+controls.fpsMovement.moveSpeed = 1.6;
+controls.pointerControls.rotateSpeed = 0.0025;
+mesh.initialized.then(() => {
+  $("carga").classList.add("some");
+  setTimeout(() => $("dica").classList.add("some"), 4500);
+}).catch(() => { $("carga").querySelector("span").textContent = "Não foi possível abrir o tour. Recarregue a página."; });
+canvas.addEventListener("pointerdown", () => $("dica").classList.add("some"), { once: true });
+renderer.setAnimationLoop(() => { controls.update(camera); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SeeSpace · Tour 3D de qualquer lugar, filmado com o celular</title>
+<meta name="description" content="Filme com o celular e receba um tour 3D em que o cliente caminha pelo espaço direto no navegador. Para imóveis, hospedagem, eventos, lojas e obras.">
+<meta name="theme-color" content="#0a0b0d">
+<meta property="og:title" content="SeeSpace · Tour 3D filmado com o celular">
+<meta property="og:description" content="O cliente caminha pelo espaço antes de visitar. Sem aplicativo, sem câmera 360.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vecchifefe-byte.github.io/seespace/">
+<meta property="og:image" content="https://vecchifefe-byte.github.io/seespace/img/compartilhar.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilo.css?v=20261006f">
+<link rel="stylesheet" href="css/acabamento.css?v=20261006f">
+<style>.heroi canvas#cena { opacity: 0; transition: opacity 1.4s ease; }</style>
+<script src="js/config.js?v=20261006f"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+  "@sparkjsdev/spark": "https://cdn.jsdelivr.net/npm/@sparkjsdev/spark@2.2.0/dist/spark.module.js"
+} }
+</script>
+</head>
+<body>
+
+<!-- ícones reaproveitados -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-3d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"/><path d="m3 7 9 5 9-5M12 12v10"/></symbol>
+</svg>
+
+<div class="progresso" id="progresso"></div>
+<header class="topo" id="topo">
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="SeeSpace, início">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#8ff0c9"/><path d="M16 7 8 11.5v9L16 25l8-4.5v-9L16 7Z" fill="none" stroke="#06251a" stroke-width="2.2" stroke-linejoin="round"/><path d="m8 11.5 8 4.5 8-4.5M16 16v9" fill="none" stroke="#06251a" stroke-width="2.2" stroke-linejoin="round"/></svg>
+      <span data-marca>SeeSpace</span>
+    </a>
+    <nav class="menu" aria-label="Seções">
+      <a href="#como">Como funciona</a>
+      <a href="#para-quem">Para quem</a>
+      <a href="#planos">Planos</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <div class="acoes">
+      <a class="entrar" href="entrar.html">Entrar</a>
+      <a class="btn btn-acc btn-sm" data-zap="Olá! Quero saber mais sobre o tour 3D.">Falar no WhatsApp</a>
+      <button class="hamb" id="hamb" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+</header>
+<nav class="gaveta" id="gaveta" aria-label="Menu">
+  <a href="#como">Como funciona</a>
+  <a href="#para-quem">Para quem</a>
+  <a href="#planos">Planos</a>
+  <a href="#duvidas">Dúvidas</a>
+  <a href="entrar.html">Entrar</a>
+  <a class="btn btn-acc" data-zap="Olá! Quero saber mais sobre o tour 3D.">Falar no WhatsApp</a>
+</nav>
+
+<main>
+  <!-- ======================= TOPO 3D ======================= -->
+  <section class="heroi" id="heroi" data-modo="janela" aria-label="Apresentação">
+    <div class="poster"></div>
+    <div class="veu"></div>
+    <div class="wrap heroi-grade">
+      <div class="texto">
+        <span class="selo"><i></i> Isto não é vídeo. É um espaço 3D de verdade.</span>
+        <h1 class="titulo-anim"><span class="p">Mostre</span> <span class="p">qualquer</span> <span class="p">lugar</span> <em class="p">em 3D.</em></h1>
+        <p class="sub">Filme com o celular. Pouco depois, seu cliente caminha pelo espaço direto no navegador, sem baixar nada e sem câmera 360.</p>
+        <div class="ctas">
+          <a class="btn btn-acc brilha" id="ver-tour" target="_blank" rel="noopener"><svg><use href="#i-3d"/></svg> Ver um tour 3D</a>
+          <a class="btn btn-vidro" href="#planos">Ver planos</a>
+        </div>
+        <ul class="mini-prova">
+          <li><svg><use href="#i-ok"/></svg> Android e iPhone</li>
+          <li><svg><use href="#i-ok"/></svg> Sem aplicativo</li>
+          <li><svg><use href="#i-ok"/></svg> Pronto em ~1 hora</li>
+        </ul>
+      </div>
+      <div class="moldura" id="moldura">
+        <canvas id="cena" aria-label="Cena 3D de um ambiente real"></canvas>
+        <div class="carga" id="carga"><b></b> carregando a cena 3D</div>
+        <div class="ui-tour" aria-hidden="true">
+          <div class="ui-topo"><span class="ui-marca">Sua Marca</span><span class="ui-ao-vivo"><i></i> 3D ao vivo</span></div>
+          <div class="ui-baixo"><div class="ui-chips"><span class="on">Sala</span><span>Cozinha</span><span>Quarto</span></div><span class="ui-zap"><svg><use href="#i-zap"/></svg> Agendar visita</span></div>
+        </div>
+        <div class="dica"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 13V5a2 2 0 1 1 4 0v6m0-1a2 2 0 1 1 4 0v2m0-1a2 2 0 1 1 4 0v4a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3l-2.5-4a2 2 0 0 1 3.4-2L8 15"/></svg> arraste para olhar em volta</div>
+        <div class="credito" id="credito"></div>
+      </div>
+    </div>
+    <a class="descer" href="#como" aria-label="Rolar para baixo"><span></span></a>
+  </section>
+
+  <!-- ======================= FATOS ======================= -->
+  <div class="fatos">
+    <div class="wrap">
+      <div class="fato"><strong>Android e iPhone</strong><span>filma com o celular que você já tem</span></div>
+      <div class="fato"><strong>~2 s</strong><span>para abrir o tour no 4G</span></div>
+      <div class="fato"><strong>~1 hora</strong><span>da filmagem ao link pronto</span></div>
+      <div class="fato"><strong>Zero app</strong><span>o cliente abre pelo link</span></div>
+    </div>
+  </div>
+
+  <!-- faixa que corre -->
+  <div class="faixa" aria-hidden="true"><div class="faixa-trilho">
+    <span>Apartamentos</span><i>✦</i><span>Casas</span><i>✦</i><span>Pousadas</span><i>✦</i><span>Hotéis</span><i>✦</i><span>Salões de festa</span><i>✦</i><span>Lojas</span><i>✦</i><span>Restaurantes</span><i>✦</i><span>Academias</span><i>✦</i><span>Clínicas</span><i>✦</i><span>Obras</span><i>✦</i><span>Escritórios</span><i>✦</i>
+    <span>Apartamentos</span><i>✦</i><span>Casas</span><i>✦</i><span>Pousadas</span><i>✦</i><span>Hotéis</span><i>✦</i><span>Salões de festa</span><i>✦</i><span>Lojas</span><i>✦</i><span>Restaurantes</span><i>✦</i><span>Academias</span><i>✦</i><span>Clínicas</span><i>✦</i><span>Obras</span><i>✦</i><span>Escritórios</span><i>✦</i>
+  </div></div>
+
+  <!-- ======================= COMO FUNCIONA ======================= -->
+  <section class="bloco" id="como">
+    <div class="wrap">
+      <div class="cabeca revela">
+        <span class="rotulo">Como funciona</span>
+        <h2 class="titulo">Três passos. <em>Nenhum equipamento.</em></h2>
+        <p class="lead">Você só precisa andar pelo espaço com o celular. O resto é com a gente.</p>
+      </div>
+      <div class="passos">
+        <article class="passo revela">
+          <div class="n">1</div>
+          <h3>Filme</h3>
+          <p>Abra o site de filmagem e ande devagar pelo espaço, uns 8 minutos por andar. Ele avisa na hora se está escuro, tremido ou rápido demais.</p>
+          <div class="ilus"><div class="cel"><div class="mira"></div><div class="aviso">✓ luz boa · continue</div></div></div>
+        </article>
+        <article class="passo revela">
+          <div class="n">2</div>
+          <h3>Envie</h3>
+          <p>O envio acontece enquanto você filma. Nossos servidores montam o 3D, separam os cômodos e conferem a qualidade.</p>
+          <div class="ilus"><div class="barra-envio"><div class="t"><i></i></div><small><span>montando o 3D…</span><span>sala · cozinha · quarto</span></small></div></div>
+        </article>
+        <article class="passo revela">
+          <div class="n">3</div>
+          <h3>Compartilhe</h3>
+          <p>Você recebe um link. Coloque no seu site, mande no WhatsApp ou poste nas redes. O cliente agenda a visita com um toque.</p>
+          <div class="ilus"><div class="link-pronto"><i></i> seespace.com.br/t/sala-vista-mar</div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= PARA QUEM ======================= -->
+  <section class="bloco" id="para-quem" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca revela">
+        <span class="rotulo">Para quem</span>
+        <h2 class="titulo">Todo lugar que <em>precisa ser visto</em> para ser escolhido.</h2>
+      </div>
+      <div class="publicos">
+        <article class="publico revela"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></div><h3>Imóveis</h3><p>Venda e aluguel. Menos visita perdida: quem marca já conhece o imóvel.</p></article>
+        <article class="publico revela"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 18V8M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/></svg></div><h3>Hospedagem</h3><p>Pousadas, hotéis e Airbnb. O hóspede vê o quarto antes de reservar.</p></article>
+        <article class="publico revela"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18.4 5.6l-2.1 2.1M21 12h-3"/><path d="M6 21h12l-2-9H8l-2 9Z"/></svg></div><h3>Eventos</h3><p>Salões, sítios e espaços de casamento. O casal percorre o espaço de casa.</p></article>
+        <article class="publico revela"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 9h16l-1-5H5L4 9Z"/><path d="M5 9v11h14V9M9 20v-6h6v6"/></svg></div><h3>Comércio</h3><p>Lojas, restaurantes, academias e clínicas. Mostre o ambiente, não só o logo.</p></article>
+        <article class="publico revela"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2 20h20M4 20V10l6-4v14M10 20V8l10 4v8"/><path d="M14 14h2M14 17h2"/></svg></div><h3>Obras e arquitetura</h3><p>Registre cada etapa e mostre o antes e depois para o cliente.</p></article>
+        <article class="publico revela"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10Z"/></svg></div><h3>Memórias</h3><p>A casa da família, o primeiro apartamento. Guarde um lugar para sempre.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= COMPARAÇÃO ======================= -->
+  <section class="bloco" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca revela">
+        <span class="rotulo">Por que 3D</span>
+        <h2 class="titulo">Foto mostra. <em>3D convence.</em></h2>
+      </div>
+      <div class="tabela-wrap revela">
+        <table class="comp">
+          <thead><tr><th></th><th>Fotos</th><th>Tour 360°</th><th>Matterport</th><th class="nos" data-marca>SeeSpace</th></tr></thead>
+          <tbody>
+            <tr><td>O cliente anda livremente</td><td class="nao">Não</td><td class="nao">Pula de ponto em ponto</td><td class="sim">Sim</td><td class="nos">Sim</td></tr>
+            <tr><td>Equipamento</td><td>Celular</td><td>Câmera 360°</td><td>Câmera própria</td><td class="nos">Celular</td></tr>
+            <tr><td>Abre no celular do cliente</td><td class="sim">Sim</td><td class="sim">Sim</td><td class="sim">Sim</td><td class="nos">Sim, em ~2 s</td></tr>
+            <tr><td>Preço por espaço</td><td>—</td><td>Varia</td><td>R$ 250–500 com fotógrafo</td><td class="nos">a partir de R$ 147</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="nota">Preço do Matterport com fotógrafo no Brasil: pesquisa de mercado, set/2026.</p>
+    </div>
+  </section>
+
+  <!-- ======================= RECURSOS ======================= -->
+  <section class="bloco" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca revela">
+        <span class="rotulo">Recursos</span>
+        <h2 class="titulo">Feito para <em>virar visita.</em></h2>
+      </div>
+      <div class="recursos">
+        <div class="lista-rec revela">
+          <div class="rec"><div class="ic"><svg><use href="#i-zap"/></svg></div><div><h3>Botão “Agendar visita”</h3><p>Leva direto para o seu WhatsApp, com a mensagem pronta.</p></div></div>
+          <div class="rec"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><div><h3>Números de cada tour</h3><p>Quantas pessoas abriram e quantas clicaram para agendar.</p></div></div>
+          <div class="rec"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></div><div><h3>Cômodos separados sozinhos</h3><p>Filme a casa inteira de uma vez. O sistema separa sala, cozinha e quartos.</p></div></div>
+          <div class="rec"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M9 4v16"/></svg></div><div><h3>Não atravessa paredes</h3><p>O passeio respeita as paredes e a altura dos olhos, como uma visita de verdade.</p></div></div>
+          <div class="rec"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18M3 12h18"/></svg></div><div><h3>Sua marca</h3><p>Seu nome e sua cor no tour. Seu cliente vê você, não a gente.</p></div></div>
+        </div>
+        <div class="codigo revela" aria-label="Exemplo de código para colocar o tour num site">
+          <div class="bolinhas"><i></i><i></i><i></i></div>
+          <pre><span class="t">&lt;iframe</span> <span class="a">src</span>=<span class="v">"seespace.com.br/t/sala"</span>
+        <span class="a">width</span>=<span class="v">"100%"</span> <span class="a">height</span>=<span class="v">"600"</span><span class="t">&gt;&lt;/iframe&gt;</span></pre>
+          <div class="janela-tour"><span class="marca-im">Sua Marca</span><div class="chips"><span class="on">Sala</span><span>Cozinha</span><span>Quarto</span></div><span class="zap">Agendar visita</span></div>
+          <small class="mut">Cole uma linha no seu site e o tour aparece.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= EXPERIMENTE ======================= -->
+  <section class="bloco" id="experimente" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca centro revela">
+        <span class="rotulo">Experimente</span>
+        <h2 class="titulo">Entre num tour <em>agora mesmo.</em></h2>
+        <p class="lead">É assim que o seu cliente vai ver: arraste para olhar em volta e ande pelo espaço.</p>
+      </div>
+      <div class="demo-tour revela">
+        <div class="demo-capa" id="demo-capa">
+          <button class="btn btn-acc brilha" id="demo-entrar"><svg><use href="#i-3d"/></svg> Entrar no tour</button>
+          <small>Abre aqui mesmo, sem baixar nada</small>
+        </div>
+        <iframe id="demo-iframe" title="Tour 3D de demonstração" allow="fullscreen; xr-spatial-tracking" hidden></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= PRÉVIA DO PAINEL ======================= -->
+  <section class="bloco" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca centro revela">
+        <span class="rotulo">Seu painel</span>
+        <h2 class="titulo">Tudo num lugar só.</h2>
+        <p class="lead">Seus tours, suas filmagens em andamento e quem se interessou.</p>
+      </div>
+      <div class="previa revela" aria-hidden="true">
+        <div class="barra"><i></i><i></i><i></i></div>
+        <div class="corpo">
+          <div class="lado"><span class="on">Início</span><span>Meus tours</span><span>Gravações</span><span>Números</span><span>Minha marca</span><span>Plano</span></div>
+          <div class="principal">
+            <div class="kpis"><div class="kpi"><small>Tours no ar</small><b>12</b></div><div class="kpi"><small>Aberturas</small><b>1.284</b></div><div class="kpi"><small>Pediram visita</small><b>57</b></div></div>
+            <div class="cards"><div class="card"></div><div class="card"></div><div class="card"></div></div>
+          </div>
+        </div>
+      </div>
+      <p class="nota" style="text-align:center">Números ilustrativos.</p>
+      <div class="previa-cta"><a class="btn btn-vidro" href="entrar.html">Ver o painel (demonstração) <svg><use href="#i-seta"/></svg></a></div>
+    </div>
+  </section>
+
+  <!-- ======================= PLANOS ======================= -->
+  <section class="bloco" id="planos" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca centro revela">
+        <span class="rotulo">Planos</span>
+        <h2 class="titulo">Preço claro, <em>sem surpresa.</em></h2>
+        <p class="lead">Escolha o plano e fale com a gente no WhatsApp para começar.</p>
+      </div>
+      <div class="planos" id="lista-planos"></div>
+      <div class="faixa-filmagem revela">
+        <div><h3>Não quer filmar? A gente vai até você.</h3><p>Filmagem + tour pronto a partir de <b id="preco-filmagem">R$ 247</b> por espaço.</p></div>
+        <a class="btn btn-vidro" data-zap="Olá! Quero que vocês filmem o meu espaço.">Pedir filmagem</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= DÚVIDAS ======================= -->
+  <section class="bloco" id="duvidas" style="padding-top:0">
+    <div class="wrap">
+      <div class="cabeca centro revela">
+        <span class="rotulo">Dúvidas</span>
+        <h2 class="titulo">Perguntas frequentes</h2>
+      </div>
+      <div class="faq revela">
+        <details><summary>Preciso de câmera especial?</summary><p>Não. Funciona com o celular que você já tem, Android ou iPhone. O site de filmagem trava o foco e a luz e te guia por voz.</p></details>
+        <details><summary>O cliente precisa baixar aplicativo?</summary><p>Não. O tour abre pelo link, no navegador do celular ou do computador.</p></details>
+        <details><summary>Quanto tempo leva?</summary><p>Uns 8 minutos de filmagem por andar. O tour fica pronto em cerca de uma hora depois do envio.</p></details>
+        <details><summary>Posso colocar no meu site?</summary><p>Pode. Você recebe um link e um código de uma linha para colar no site.</p></details>
+        <details><summary>E se a filmagem ficar ruim?</summary><p>O site avisa na hora quando está escuro, tremido ou rápido demais. Se mesmo assim o 3D não ficar bom, a gente orienta você a refilmar só o trecho que faltou.</p></details>
+        <details><summary>Quem pode ver o tour?</summary><p>Só quem tiver o link. Você decide onde compartilhar.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FINAL ======================= -->
+  <section class="final">
+    <div class="wrap">
+      <h2>Seu próximo cliente pode entrar <em class="serif" style="color:var(--acc)">agora.</em></h2>
+      <p>Fale com a gente e receba o primeiro tour 3D do seu espaço.</p>
+      <div class="ctas">
+        <a class="btn btn-acc" data-zap="Olá! Quero fazer o primeiro tour 3D."><svg><use href="#i-zap"/></svg> Falar no WhatsApp</a>
+        <a class="btn btn-vidro" href="#planos">Ver planos</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="wrap">
+    <div>
+      <a class="logo" href="#"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#8ff0c9"/><path d="M16 7 8 11.5v9L16 25l8-4.5v-9L16 7Z" fill="none" stroke="#06251a" stroke-width="2.2" stroke-linejoin="round"/><path d="m8 11.5 8 4.5 8-4.5M16 16v9" fill="none" stroke="#06251a" stroke-width="2.2" stroke-linejoin="round"/></svg><span data-marca>SeeSpace</span></a>
+      <p style="max-width:300px">Tours 3D de qualquer lugar, filmados com o celular. Porto Alegre, Brasil.</p>
+    </div>
+    <div><h4>Produto</h4><a href="#como">Como funciona</a><a href="#planos">Planos</a><a href="entrar.html">Entrar</a></div>
+    <div><h4>Contato</h4><a data-zap="Olá!">WhatsApp</a><a href="privacidade.html">Privacidade e termos</a></div>
+    <div class="fim"><span>© 2026 <span data-marca>SeeSpace</span></span><span id="credito-rodape"></span></div>
+  </div>
+</footer>
+
+<a class="zap-flut" id="zap-flut" data-zap="Olá! Quero saber mais sobre o tour 3D." aria-label="Falar no WhatsApp"><svg><use href="#i-zap"/></svg></a>
+
+<script>
+(() => {
+  const S = window.SITE;
+  // nome e WhatsApp vêm do config.js
+  document.querySelectorAll("[data-marca]").forEach(e => e.textContent = S.marca);
+  document.querySelectorAll("[data-zap]").forEach(a => { a.href = S.wa(a.dataset.zap); a.target = "_blank"; a.rel = "noopener"; });
+  const h = S.hero || {};
+  document.getElementById("ver-tour").href = h.tour || `${S.servidor}/i/${h.imovel}/`;
+  document.getElementById("heroi").dataset.modo = h.modo || "janela";
+  document.getElementById("demo-entrar").onclick = () => {
+    const f = document.getElementById("demo-iframe");
+    f.src = document.getElementById("ver-tour").href; f.hidden = false;
+    document.getElementById("demo-capa").classList.add("some");
+  };
+  if (h.credito) { document.getElementById("credito").textContent = h.credito; document.getElementById("credito-rodape").textContent = "Cena do topo: " + h.credito; }
+
+  // planos
+  const ok = '<svg><use href="#i-ok"/></svg>';
+  document.getElementById("lista-planos").innerHTML = S.planos.map(p => `
+    <article class="plano revela${p.destaque ? " destaque" : ""}">
+      ${p.destaque ? '<span class="tag">Mais escolhido</span>' : ""}
+      <h3>${p.nome}</h3><p class="res">${p.resumo}</p>
+      <div class="preco"><small>R$</small><b>${p.preco}</b><small>${p.sufixo}</small></div>
+      <ul>${p.itens.map(i => `<li>${ok}<span>${i}</span></li>`).join("")}</ul>
+      <a class="btn ${p.destaque ? "btn-acc" : "btn-vidro"}" target="_blank" rel="noopener"
+         href="${S.wa(`Olá! Quero o plano ${p.nome} (R$ ${p.preco} ${p.sufixo}) do ${S.marca}.`)}">Quero esse</a>
+    </article>`).join("");
+  document.getElementById("preco-filmagem").textContent = "R$ " + S.filmagemInclusa;
+
+  // topo fica sólido ao rolar; botão flutuante some no topo
+  const topo = document.getElementById("topo"), flut = document.getElementById("zap-flut");
+  const rolou = () => { topo.classList.toggle("solido", scrollY > 40); flut.classList.toggle("esconde", scrollY < innerHeight * .6); };
+  addEventListener("scroll", rolou, { passive: true }); addEventListener("resize", rolou); addEventListener("load", rolou); rolou();
+
+  // barra de progresso da leitura
+  const prog = document.getElementById("progresso");
+  addEventListener("scroll", () => { const m = document.documentElement.scrollHeight - innerHeight; prog.style.transform = `scaleX(${m > 0 ? scrollY / m : 0})`; }, { passive: true });
+
+  // brilho que segue o mouse nos cartões
+  document.querySelectorAll(".publico, .passo, .plano, .kpi-luz").forEach(c => c.addEventListener("pointermove", e => {
+    const r = c.getBoundingClientRect(); c.style.setProperty("--mx", (e.clientX - r.left) + "px"); c.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }));
+
+  // menu do celular
+  const hamb = document.getElementById("hamb"), gav = document.getElementById("gaveta");
+  hamb.onclick = () => { const a = gav.classList.toggle("aberta"); hamb.setAttribute("aria-expanded", a); };
+  gav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => gav.classList.remove("aberta")));
+
+  // revelar ao rolar
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("vis"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".revela").forEach(e => io.observe(e));
+})();
+</script>
+<script type="module" src="js/heroi3d.js?v=20261006f"></script>
+</body>
+</html>
